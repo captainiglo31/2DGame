@@ -71,6 +71,17 @@ Das 2-Gitter-Modell aus dem GDD (Euler-Strömungsfeld + Partikel) ist **bewusst 
 - ✅ HUD: Ressourcen, Tank, Tag/Nacht, Gezeiten, Auftrag, Werkzeugleiste, Bau-Palette
 - ✅ Steuerungshilfe, Statistik, Alpha-Abschlussbildschirm, Debug-Overlay (F3)
 
+## M6b – Spielfigur & Präsentation ✅
+- ✅ Spielfigur (Pixel-Art-Taucheringenieur): Laufen, Springen, Jetpack mit Treibstoff, Schwimmen, Stufensteigen über Sandhaufen, Freidrücken bei Verschüttung
+- ✅ Kamera folgt der Figur (mit Blickvorlauf zum Mauszeiger); Werkzeuge wirken nur in Reichweite (56 → 68 → 84 Zellen) und zielen von der Düse
+- ✅ WebGL2-Renderer (2 Pässe: pro Zelle schattieren, pixelgenau hochskalieren): Materialtexturen (Gesteinsschichten, Adern mit Glitzern, Holzplanken, Förderband-Animation, glühende Öfen), Kantenlicht, Tiefendunkelheit unter Tage mit seitlichem Himmelslicht, transparentes Wasser mit Tiefe/Schaum/Kaustik, bis zu 24 Punktlichter (Helmlampe, Öfen, Trichter)
+- ✅ Parallax-Hintergrund: Himmel mit Tageszeiten, Sonne/Mond, Sterne, ziehende Wolken, Meereshorizont, zwei Bergketten
+- ✅ Partikeleffekte: Saugstrom, Auswurf, Bohrfunken, Jetpack-Flamme, Landestaub, Glut/Dampf an Maschinen, Verkaufsfunken
+- ✅ Basisgebäude mit Fenstern (nachts beleuchtet), Tür, Schild, blinkender Antenne
+- ✅ UI im Pixel-Stil: Pixelify Sans + Silkscreen (OFL, lokal gebündelt), handgezeichnete Pixel-Icons statt Emojis, kantige Panels
+- ✅ Touch: Steuerkreuz (laufen/springen) bei Touch-Geräten
+- ✅ Fallback: Canvas2D-Renderer, falls WebGL2 fehlt
+
 ## M7 – Balancing & QA 🟡 *(laufend)*
 - ✅ Balancing-Tabellen + automatischer Balancing-Test (Forschung/Credits reichen für den Pfad zum Finale)
 - ✅ Browser-Smoke-Test (Saugen → Liefern → Bauen → Forschung → Speichern → automatische Fabrik → Nacht) mit Screenshots
@@ -90,9 +101,10 @@ Das 2-Gitter-Modell aus dem GDD (Euler-Strömungsfeld + Partikel) ist **bewusst 
 - Neue Risiken: Trübungswolken, Kavitation, Korrosion (Salzwasser)
 - Energie-System (Generatoren, Leitungen)
 
-### M9 – Präsentation ⬜
-- WebGL-Renderer mit Licht (Trockner/Öfen glühen nachts), Wasser-Transparenz, Partikel-Effekte
-- Echte Musik & Soundeffekte, Pixel-Art-Sprites für Maschinen
+### M9 – Präsentation (Teil 2) ⬜
+- Eigene Sprites für mehrzellige Maschinen (Bohrturm, Magnet, Ofen) statt Zellmuster
+- Weitere Figuren-Animationen (Werkzeug-Rückstoß, Schwimmen, Idle-Varianten), Figur-Anpassung
+- Echte Musik & Soundeffekte
 - Onboarding-Tutorial mit Hervorhebungen
 
 ### M10 – Mobile ⬜

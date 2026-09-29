@@ -8,7 +8,7 @@ import { existsSync } from 'node:fs';
 
 const DIST = 'dist';
 const OUT = 'test-results';
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.wasm': 'application/wasm', '.json': 'application/json' };
+const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.wasm': 'application/wasm', '.json': 'application/json', '.woff2': 'font/woff2', '.woff': 'font/woff' };
 
 const server = createServer(async (req, res) => {
   const url = decodeURIComponent((req.url ?? '/').split('?')[0]);
@@ -26,7 +26,7 @@ const port = server.address().port;
 await mkdir(OUT, { recursive: true });
 
 const executablePath = ['/opt/pw-browsers/chromium', '/opt/pw-browsers/chromium-1194/chrome-linux/chrome'].find((p) => existsSync(p));
-const browser = await chromium.launch({ executablePath, args: ['--use-gl=swiftshader', '--enable-unsafe-swiftshader'] });
+const browser = await chromium.launch({ executablePath, args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
 const errors = [];
 page.on('pageerror', (e) => errors.push(String(e)));
@@ -68,17 +68,40 @@ try {
   const a = await info();
   check(a.tick > 10, `simulation runs (tick ${a.tick})`);
 
-  // Suck sand: find a sand column near the core and hold LMB there.
+  const info0 = await page.evaluate(() => window.abyssal.game.debugInfo());
+  check(info0.webgl, 'WebGL2 renderer active');
+  check(info0.player.onGround, `player stands on the ground (${info0.player.x.toFixed(0)}, ${info0.player.y.toFixed(0)})`);
+
+  // Walk right for a moment.
+  await page.keyboard.down('d');
+  await page.waitForTimeout(1500);
+  await page.keyboard.up('d');
+  await page.waitForTimeout(300);
+  const walked = await page.evaluate(() => window.abyssal.game.debugInfo().player);
+  check(walked.x > info0.player.x + 5, `player walks (${info0.player.x.toFixed(0)} -> ${walked.x.toFixed(0)})`);
+
+  // Jump / jetpack.
+  await page.keyboard.down('w');
+  await page.waitForTimeout(900);
+  const air = await page.evaluate(() => window.abyssal.game.debugInfo().player);
+  await page.keyboard.up('w');
+  check(air.y < walked.y - 5, `player jumps/flies (${walked.y.toFixed(0)} -> ${air.y.toFixed(0)})`);
+  await page.waitForTimeout(1500);
+  await page.screenshot({ path: `${OUT}/02b-player.png` });
+
+  // Wait for the landing so the camera settles.
+  await page.waitForFunction(() => window.abyssal.game.player.onGround && Math.abs(window.abyssal.game.player.vx) < 0.1, null, { timeout: 15000 });
+  await page.waitForTimeout(800);
+
+  // Suck sand: find sand within reach of the player's hand.
   const target = await page.evaluate(() => {
     const g = window.abyssal.game;
     const { sim } = g;
-    const c = sim.core;
-    for (let dx = 40; dx < 200; dx++) {
-      const x = c.x + c.w + dx;
-      for (let y = 0; y < sim.h; y++) {
-        const m = sim.get(x, y);
-        if (m === 3) return { wx: x, wy: y + 3 };
-        if (m !== 0) break;
+    const hnd = g.player.hand;
+    for (let dx = 8; dx < 40; dx++) {
+      const x = Math.floor(hnd.x + dx);
+      for (let y = Math.floor(hnd.y - 20); y < hnd.y + 40; y++) {
+        if (sim.get(x, y) === 3) return { wx: x, wy: y + 2 };
       }
     }
     return null;
@@ -88,9 +111,11 @@ try {
   let p = await toScreen(target.wx, target.wy);
   await page.mouse.move(p.x, p.y);
   await page.mouse.down({ button: 'left' });
-  for (let i = 0; i < 12; i++) {
-    await page.mouse.move(p.x + (i % 4) * 6, p.y + Math.floor(i / 4) * 6);
-    await page.waitForTimeout(120);
+  for (let i = 0; i < 16; i++) {
+    // re-aim every step: the camera follows the player and may drift
+    p = await toScreen(target.wx + (i % 4) * 2, target.wy + Math.floor(i / 4) * 2);
+    await page.mouse.move(p.x, p.y);
+    await page.waitForTimeout(150);
   }
   await page.mouse.up({ button: 'left' });
   const b = await info();
@@ -110,12 +135,13 @@ try {
   check(c.credits > b.credits, `credits increased ${b.credits.toFixed(0)} -> ${c.credits.toFixed(0)}`);
   await page.screenshot({ path: `${OUT}/04-delivered.png` });
 
-  // Build a wall.
+  // Build a wall above the player.
   await page.keyboard.press('3');
-  p = await toScreen(b.core.x - 30, b.core.y - 20);
+  const pl = await page.evaluate(() => window.abyssal.game.player.hand);
+  p = await toScreen(pl.x - 10, pl.y - 25);
   await page.mouse.move(p.x, p.y);
   await page.mouse.down();
-  await page.mouse.move(p.x + 60, p.y, { steps: 10 });
+  await page.mouse.move(p.x + 80, p.y, { steps: 10 });
   await page.mouse.up();
   const walls = await page.evaluate(() => window.abyssal.sim.api.count_mat(13));
   check(walls > 100, `built walls (${walls} wall cells incl. base)`);
@@ -164,12 +190,12 @@ try {
     for (let x = c.x + c.w / 2; x < x0; x++) sim.place(x, top, M.CONV_L);
     for (let x = x0 + 3; x < x0 + 12; x++) sim.place(x, top, M.CONV_L);
     const before = game.state.stats.delivered[3] ?? 0;
-    await new Promise((r) => setTimeout(r, 8000));
+    await new Promise((r) => setTimeout(r, 12000));
     const d = game.state.stats.delivered;
     return { sand: (d[3] ?? 0) - before, gravel: d[7] ?? 0, all: d, top, sy };
   });
   console.log('factory', JSON.stringify(factory));
-  check(factory.sand + factory.gravel > 30, `drill + belt deliver automatically (${factory.sand + factory.gravel} cells in 8 s)`);
+  check(factory.sand + factory.gravel > 30, `drill + belt deliver automatically (${factory.sand + factory.gravel} cells in 12 s)`);
   await page.evaluate(() => {
     const g = window.abyssal.game;
     const c = g.sim.core;

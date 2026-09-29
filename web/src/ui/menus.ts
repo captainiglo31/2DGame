@@ -5,7 +5,10 @@ import { MAT_KEYS } from '../sim/materials';
 import { deleteSlot, readMeta, readSlot, SLOTS, validate, type SaveFile, type Slot } from '../save/save';
 import { DEFAULT_SETTINGS, saveSettings, type Settings } from '../settings';
 import { clear, fmt, fmtTime, h } from './dom';
+import { iconUrl } from '../render/sprites';
 import { researchDialog } from './researchUI';
+
+const icon = (name: string) => h('img', { class: 'px-icon sm', src: iconUrl(name), alt: '' });
 
 /** Available languages, shown in their own name. Add a table in i18n/ to extend. */
 export const LANGS: [Lang, string][] = [
@@ -98,6 +101,8 @@ export class Menus {
     this.stack = [];
     this.screen = 'title';
     this.inGame = false;
+    this.host.game.attract = true;
+    this.host.game.snapCamera();
     const latest = SLOTS.map((s) => readMeta(s)).filter(Boolean).sort((a, b) => b!.savedAt - a!.savedAt)[0];
     this.push(() =>
       h(
@@ -170,7 +175,7 @@ export class Menus {
         h(
           'div',
           { class: 'dialog panel', 'data-testid': 'welcome' },
-          h('h2', null, '🌊 ', t('welcome.title')),
+          h('h2', null, t('welcome.title')),
           h('p', { style: 'line-height:1.5' }, t('welcome.intro')),
           h('ol', { style: 'line-height:1.6;padding-left:1.2em' }, ...t('welcome.steps').split('\n').map((s) => h('li', null, s))),
           h(
@@ -186,6 +191,8 @@ export class Menus {
 
   enterGame() {
     this.inGame = true;
+    this.host.game.attract = false;
+    this.host.game.snapCamera();
     this.closeAll();
     audio.unlock();
   }
@@ -241,7 +248,10 @@ export class Menus {
           ? h(
               'small',
               null,
-              `${new Date(meta.savedAt).toLocaleString(getLang())} · 💰 ${fmt(meta.credits)} · 📜 ${meta.contract + 1} · ⏱ ${fmtTime(meta.playTime)}${meta.creative ? ' · ' + t('menu.creative') : ''}`,
+              `${new Date(meta.savedAt).toLocaleString(getLang())} · ${t('stats.contract')} ${meta.contract + 1} · ${fmtTime(meta.playTime)}${meta.creative ? ' · ' + t('menu.creative') : ''}`,
+              ' · ',
+              icon('coin'),
+              fmt(meta.credits),
             )
           : h('small', null, t('menu.empty'));
         list.append(
@@ -513,11 +523,11 @@ export class Menus {
     this.push(() => {
       const table = h('table', { class: 'stats-table' });
       const row = (k: string, v: string) => table.append(h('tr', null, h('td', null, k), h('td', null, v)));
-      row('⏱', fmtTime(st.stats.playTime));
-      row('💰 Σ', fmt(st.stats.earned));
-      row('🧱', fmt(st.stats.built));
-      row('📜', `${st.contractIndex}`);
-      row('🔬', `${st.research.length}`);
+      row(t('stats.playTime'), fmtTime(st.stats.playTime));
+      row(t('stats.earned'), fmt(st.stats.earned));
+      row(t('stats.built'), fmt(st.stats.built));
+      row(t('stats.contracts'), `${st.contractIndex}`);
+      row(t('stats.research'), `${st.research.length}`);
       for (const [m, n] of Object.entries(st.stats.delivered)) if (n) row(t(`mat.${MAT_KEYS[Number(m)]}`), fmt(n));
       return h(
         'div',
@@ -535,10 +545,9 @@ export class Menus {
         h(
           'div',
           { class: 'dialog panel', style: 'text-align:center' },
-          h('div', { style: 'font-size:3em' }, '🌊⭐'),
           h('h2', null, t('end.title')),
           h('p', { style: 'line-height:1.5' }, t('end.text')),
-          h('p', { style: 'color:var(--muted)' }, `⏱ ${fmtTime(this.host.game.state.stats.playTime)} · 💰 ${fmt(this.host.game.state.stats.earned)}`),
+          h('p', { style: 'color:var(--muted)' }, `${t('stats.playTime')}: ${fmtTime(this.host.game.state.stats.playTime)} · ${t('stats.earned')}: ${fmt(this.host.game.state.stats.earned)}`),
           h('div', { class: 'actions', style: 'justify-content:center' }, h('button', { class: 'primary', onclick: () => this.closeAll() }, t('end.continue'))),
         ),
       ),
@@ -559,7 +568,7 @@ export class Menus {
             'div',
             { class: 'dialog panel', 'data-testid': 'confirm' },
             h('p', null, msg),
-            h('div', { class: 'actions' }, h('button', { onclick: () => done(false) }, '✕'), h('button', { class: 'primary', onclick: () => done(true) }, '✓')),
+            h('div', { class: 'actions' }, h('button', { onclick: () => done(false) }, t('menu.no')), h('button', { class: 'primary', 'data-testid': 'confirm-yes', onclick: () => done(true) }, t('menu.yes'))),
           ),
         ),
       );

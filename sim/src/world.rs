@@ -874,6 +874,17 @@ impl World {
         }
     }
 
+    /// Pack raw cell data for the GPU renderer: mat | var << 8 | st << 16 | 0xFF << 24.
+    /// Always packs whole rows so the JS side can upload one contiguous block.
+    pub fn pack(&mut self, y0: i32, y1: i32) {
+        let y0 = y0.clamp(0, self.h) as usize;
+        let y1 = y1.clamp(0, self.h) as usize;
+        let w = self.w as usize;
+        for i in y0 * w..y1 * w {
+            self.rgba[i] = self.mat[i] as u32 | (self.var[i] as u32) << 8 | (self.st[i] as u32) << 16 | 0xFF00_0000;
+        }
+    }
+
     // ----------------------------------------------------------- player API
 
     /// Remove up to `max` loose particles in a circle; counts land in `taken`.

@@ -3,10 +3,11 @@ import { CONTRACTS } from '../data/contracts';
 import { TOOLS, type Game, type ToolId } from '../game/Game';
 import { activeContract, goalProgress, inventoryTotal, isUnlocked } from '../game/state';
 import { t } from '../i18n';
+import { iconUrl } from '../render/sprites';
 import { LOOSE, MAT_COLORS, MAT_KEYS } from '../sim/materials';
 import { clear, fmt, h, setText } from './dom';
 
-const TOOL_ICONS: Record<ToolId, string> = { vacuum: '🌀', drill: '⛏️', build: '🧱', remove: '🪓' };
+const icon = (name: string, cls = 'px-icon') => h('img', { class: cls, src: iconUrl(name), alt: '', draggable: false });
 
 export interface HudActions {
   openResearch(): void;
@@ -20,7 +21,10 @@ export class Hud {
   private fp = h('span', { class: 'value' });
   private tankText = h('span', { class: 'value' });
   private tankBar = h('div', { class: 'bar' }, h('i'));
-  private env = h('span', { class: 'value' });
+  private envDay = h('span', { class: 'value' });
+  private envTide = h('span', { class: 'value' });
+  private envDayIcon = icon('sun');
+  private envTideIcon = icon('wave');
   private toolButtons = new Map<ToolId, HTMLButtonElement>();
   private context = h('div', { class: 'context panel' });
   private contract = h('div', { class: 'contract panel' });
@@ -37,7 +41,7 @@ export class Hud {
       const b = h(
         'button',
         { class: 'tool', title: t(`tool.${id}.desc`), onclick: () => game.setTool(id) },
-        h('span', { class: 'icon' }, TOOL_ICONS[id]),
+        icon(id, 'px-icon big'),
         h('span', { class: 'name' }, t(`tool.${id}`), ' ', h('kbd', null, String(i + 1))),
       );
       this.toolButtons.set(id, b);
@@ -50,10 +54,10 @@ export class Hud {
       h(
         'div',
         { class: 'hud-top' },
-        h('div', { class: 'stat panel gold', title: t('hud.credits') }, '💰', h('span', { class: 'label' }, t('hud.credits')), this.credits),
-        h('div', { class: 'stat panel fp', title: t('hud.fp') }, '🔬', h('span', { class: 'label' }, t('hud.fp')), this.fp),
-        h('div', { class: 'stat panel tank' }, h('span', { class: 'label' }, t('hud.tank')), this.tankBar, this.tankText),
-        h('div', { class: 'stat panel' }, this.env),
+        h('div', { class: 'stat panel gold', title: t('hud.credits') }, icon('coin'), h('span', { class: 'label' }, t('hud.credits')), this.credits),
+        h('div', { class: 'stat panel fp', title: t('hud.fp') }, icon('flask'), h('span', { class: 'label' }, t('hud.fp')), this.fp),
+        h('div', { class: 'stat panel tank', title: t('hud.tank') }, icon('tank'), this.tankBar, this.tankText),
+        h('div', { class: 'stat panel env' }, this.envDayIcon, this.envDay, h('span', { class: 'sep' }), this.envTideIcon, this.envTide),
       ),
       h(
         'div',
@@ -61,17 +65,36 @@ export class Hud {
         h(
           'div',
           { class: 'hud-buttons' },
-          h('button', { onclick: actions.openResearch, 'data-testid': 'open-research' }, '🔬 ', t('hud.research'), ' ', h('kbd', null, 'T')),
-          h('button', { onclick: actions.openMenu, 'data-testid': 'open-menu' }, '☰ ', t('hud.menu')),
+          h('button', { onclick: actions.openResearch, 'data-testid': 'open-research' }, icon('flask'), t('hud.research'), h('kbd', null, 'T')),
+          h('button', { onclick: actions.openMenu, 'data-testid': 'open-menu' }, t('hud.menu'), h('kbd', null, 'Esc')),
         ),
         this.contract,
       ),
       h('div', { class: 'hud-bottom' }, this.context, toolbar),
       this.hover,
       this.toasts,
+      this.coarse ? this.touchPad() : null,
     );
     this.contract.addEventListener('click', () => this.toggleContract());
     if (this.coarse || (typeof innerWidth !== 'undefined' && innerWidth < 720)) this.contract.classList.add('collapsed');
+  }
+
+  /** On-screen movement pad for touch devices. */
+  private touchPad(): HTMLElement {
+    const g = this.game;
+    const btn = (label: string, key: 'left' | 'right' | 'up') => {
+      const b = h('button', { class: 'pad-btn', 'aria-label': key }, label);
+      const set = (v: boolean) => (e: Event) => {
+        e.preventDefault();
+        g.touchInput[key] = v;
+      };
+      b.addEventListener('pointerdown', set(true));
+      b.addEventListener('pointerup', set(false));
+      b.addEventListener('pointercancel', set(false));
+      b.addEventListener('pointerleave', set(false));
+      return b;
+    };
+    return h('div', { class: 'touch-pad' }, h('div', { class: 'pad-move' }, btn('◀', 'left'), btn('▶', 'right')), btn('▲', 'up'));
   }
 
   toggleContract() {
@@ -97,7 +120,11 @@ export class Hud {
     setText(this.tankText, `${fmt(total)}/${fmt(cap)}`);
     (this.tankBar.firstChild as HTMLElement).style.width = `${Math.min(100, (total / cap) * 100)}%`;
     this.tankBar.classList.toggle('full', total >= cap);
-    setText(this.env, `${g.isNight() ? '🌙 ' + t('hud.night') : '☀️ ' + t('hud.day')} · ${g.tideRising() ? '🌊 ' + t('hud.tide.rising') : '〰️ ' + t('hud.tide.falling')}`);
+    const night = g.isNight();
+    setText(this.envDay, night ? t('hud.night') : t('hud.day'));
+    const dayIcon = iconUrl(night ? 'moon' : 'sun');
+    if (this.envDayIcon.getAttribute('src') !== dayIcon) this.envDayIcon.setAttribute('src', dayIcon);
+    setText(this.envTide, g.tideRising() ? t('hud.tide.rising') : t('hud.tide.falling'));
     for (const [id, b] of this.toolButtons) b.classList.toggle('active', g.tool === id);
     const hm = g.hoverMaterial();
     this.hover.style.display = hm > 0 && !this.coarse ? '' : 'none';
@@ -118,8 +145,8 @@ export class Hud {
     if (g.tool === 'vacuum') {
       if (this.coarse) {
         c.append(
-          h('button', { class: `chip ${g.emitMode ? '' : 'active'}`, onclick: () => (g.emitMode = false) }, '🌀 ', t('hud.suck')),
-          h('button', { class: `chip ${g.emitMode ? 'active' : ''}`, onclick: () => (g.emitMode = true) }, '💨 ', t('hud.emit')),
+          h('button', { class: `chip ${g.emitMode ? '' : 'active'}`, onclick: () => (g.emitMode = false) }, icon('vacuum'), t('hud.suck')),
+          h('button', { class: `chip ${g.emitMode ? 'active' : ''}`, onclick: () => (g.emitMode = true) }, t('hud.emit')),
           h('span', { class: 'sep' }),
         );
       }
@@ -154,7 +181,7 @@ export class Hud {
         const unlocked = isUnlocked(g.state, b.unlock);
         const title = unlocked
           ? `${t(`build.${b.id}.desc`)}`
-          : `🔒 ${t('research.requires', { list: t(`research.${b.unlock}.name`) })}`;
+          : t('research.requires', { list: t(`research.${b.unlock}.name`) });
         c.append(
           h(
             'button',
@@ -166,9 +193,9 @@ export class Hud {
               onclick: () => (g.buildId = b.id),
             },
             h('span', { class: 'swatch', style: `background:${b.mode === 'pipe' ? '#9aa7b0' : MAT_COLORS[b.mat]}` }),
-            unlocked ? '' : '🔒 ',
+            
             t(`build.${b.id}`),
-            h('span', { class: 'cost' }, b.cost + '¢'),
+            h('span', { class: 'cost' }, icon('coin', 'px-icon sm'), String(b.cost)),
           ),
         );
       }
@@ -211,10 +238,10 @@ export class Hud {
     const el = this.contract;
     clear(el);
     if (!c || !prog) {
-      el.append(h('h3', null, '🏁 ', t('contract.allDone')));
+      el.append(h('h3', null, t('contract.allDone')));
       return;
     }
-    el.append(h('h3', null, h('span', null, '📜 ', t(`contract.${c.id}.title`)), h('small', null, `${st.contractIndex + 1}/${CONTRACTS.length} `, h('kbd', null, 'C'))));
+    el.append(h('h3', null, h('span', null, t(`contract.${c.id}.title`)), h('small', null, `${st.contractIndex + 1}/${CONTRACTS.length} `, h('kbd', null, 'C'))));
     c.goals.forEach((goal, i) => {
       const p = prog.parts[i];
       const done = p.have >= p.need;
@@ -230,7 +257,7 @@ export class Hud {
       el.append(row);
     });
     const r = c.reward;
-    if (r.credits || r.fp) el.append(h('div', { class: 'reward' }, `${t('contract.reward')}: ${r.credits ? `💰 ${r.credits}` : ''} ${r.fp ? `🔬 ${r.fp}` : ''}`));
-    if (g.settings.tutorialHints) el.append(h('div', { class: 'hint' }, '💡 ', t(`contract.${c.id}.hint`)));
+    if (r.credits || r.fp) el.append(h('div', { class: 'reward' }, `${t('contract.reward')}: `, r.credits ? h('span', { class: 'rw' }, icon('coin', 'px-icon sm'), String(r.credits)) : null, r.fp ? h('span', { class: 'rw' }, icon('flask', 'px-icon sm'), String(r.fp)) : null));
+    if (g.settings.tutorialHints) el.append(h('div', { class: 'hint' }, t(`contract.${c.id}.hint`)));
   }
 }

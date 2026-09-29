@@ -58,6 +58,7 @@ export const BASE_STATS = {
   vacRate: 14, // cells per tick
   emitRate: 10, // cells per tick
   emitRadius: 3,
+  reach: 56, // tool range around the player's hand (cells)
   drillPower: 0.02, // chance per rock cell per tick
   drillRadius: 5,
   priceMult: 1,

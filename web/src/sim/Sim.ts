@@ -7,6 +7,7 @@ export interface SimExports {
   clear_world(): void;
   step(n: number): void;
   render(x0: number, y0: number, x1: number, y1: number): void;
+  pack(y0: number, y1: number): void;
   mat_ptr(): number;
   var_ptr(): number;
   st_ptr(): number;

@@ -33,6 +33,14 @@ export const de: Record<string, string> = {
   'menu.aboutText':
     'Abyssal Drift ist ein Fabrik- und Partikelspiel. Jedes Sandkorn wird simuliert. Diese Alpha umfasst Phase 1: die Küste. Schelf und Tiefsee folgen.',
 
+  'menu.yes': 'Ja',
+  'menu.no': 'Abbrechen',
+  'stats.playTime': 'Spielzeit',
+  'stats.earned': 'Verdient gesamt',
+  'stats.built': 'Gebaute Zellen',
+  'stats.contracts': 'Erfüllte Aufträge',
+  'stats.contract': 'Auftrag',
+  'stats.research': 'Erforscht',
   // hud
   'hud.credits': 'Credits',
   'hud.fp': 'Forschung',
@@ -128,9 +136,9 @@ export const de: Record<string, string> = {
   'research.vac3.name': 'Sauger-Tank III',
   'research.vac3.desc': 'Tankkapazität 2500.',
   'research.rad1.name': 'Weite Düse',
-  'research.rad1.desc': 'Größerer Saugradius, schneller saugen und auswerfen.',
+  'research.rad1.desc': 'Größerer Saugradius, mehr Reichweite, schneller saugen und auswerfen.',
   'research.rad2.name': 'Breitdüse',
-  'research.rad2.desc': 'Noch größerer Radius und Durchsatz.',
+  'research.rad2.desc': 'Noch größerer Radius, Reichweite und Durchsatz.',
   'research.drill1.name': 'Pressluftbohrer',
   'research.drill1.desc': 'Handbohrer 2,5× schneller, größerer Radius.',
   'research.drill2.name': 'Diamantkrone',
@@ -177,7 +185,7 @@ export const de: Record<string, string> = {
   'contract.goal.research': 'Erforsche {name}',
   'contract.c1.title': 'Erste Ladung',
   'contract.c1.hint':
-    'Wähle den Sauger (1), halte die linke Maustaste über Sand. Fahre dann über den grünen Trichter der Basis und wirf ihn mit der rechten Maustaste aus.',
+    'Wähle den Sauger (1) und halte die linke Maustaste über Sand. Lauf dann zur Basis und wirf den Sand mit der rechten Maustaste in den grünen Trichter.',
   'contract.c2.title': 'Fließband-Idee',
   'contract.c2.hint': 'Öffne die Forschung (T) und erforsche Förderbänder. Baue eine Förderstrecke von den Dünen zur Basis.',
   'contract.c3.title': 'Kiesgrube',
@@ -200,7 +208,7 @@ export const de: Record<string, string> = {
   'welcome.intro':
     'Du leitest eine kleine Rohstoffstation am Strand. Alles hier ist echte Materie: Sand rieselt, Wasser fließt, Schlick setzt sich ab. Liefere Material in den grünen Trichter deiner BASIS, um Credits und Forschung zu verdienen.',
   'welcome.steps':
-    'Sauger (1): Linke Maustaste saugt Sand in den Tank.\nÜber dem Basis-Trichter mit der rechten Maustaste auswerfen – das bringt Credits.\nMit Credits und Forschung (T) schaltest du Förderbänder, Siebe, Trockner und mehr frei.\nOben rechts steht dein aktueller Auftrag mit Tipps.',
+    'Mit A/D läufst du, mit W oder Leertaste springst du – gedrückt halten zündet den Jetpack.\nSauger (1): Linke Maustaste saugt Sand in den Tank. Werkzeuge reichen nur ein Stück weit.\nÜber dem Basis-Trichter mit der rechten Maustaste auswerfen – das bringt Credits.\nMit Credits und Forschung (T) schaltest du Förderbänder, Siebe, Trockner und mehr frei.\nOben rechts steht dein aktueller Auftrag mit Tipps.',
   'welcome.go': 'Los geht’s!',
 
   // alpha end
@@ -235,5 +243,5 @@ export const de: Record<string, string> = {
   // help
   'help.title': 'Steuerung',
   'help.rows':
-    '1–4|Werkzeug wählen\nLMT|Werkzeug benutzen (Saugen / Bohren / Bauen / Abreißen)\nRMT|Auswerfen (Sauger) · Abriss (Bauen)\nQ / E|Material im Tank wechseln\nR|Richtung drehen (Förderband, Rohr)\nMausrad|Zoom · mit Strg: Pinselgröße\nWASD / Pfeile / Mitteltaste|Kamera bewegen\nLeertaste|Kamera zur Basis\nT|Forschung\nC|Aufträge ein-/ausklappen\nF3|Debug-Anzeige\nEsc|Pause / Menü\nTouch|1 Finger: Werkzeug · 2 Finger: Kamera & Zoom',
+    'A / D|Laufen\nW / Leertaste|Springen · gedrückt halten: Jetpack (Treibstoff lädt am Boden)\n1–4|Werkzeug wählen\nLMT|Werkzeug benutzen (Saugen / Bohren / Bauen / Abreißen)\nRMT|Auswerfen (Sauger) · Abriss (Bauen)\nQ / E|Material im Tank wechseln\nR|Richtung drehen (Förderband, Rohr)\nMausrad|Zoom · mit Strg: Pinselgröße\nT|Forschung\nC|Aufträge ein-/ausklappen\nF3|Debug-Anzeige\nEsc|Pause / Menü\nTouch|Pfeiltasten unten: laufen & springen · 1 Finger: Werkzeug · 2 Finger: Zoom',
 };

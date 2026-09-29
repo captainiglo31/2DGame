@@ -2,21 +2,24 @@ import { RESEARCH, RESEARCH_BY_ID, type Branch } from '../data/research';
 import type { Game } from '../game/Game';
 import { canResearch } from '../game/state';
 import { t } from '../i18n';
+import { iconUrl } from '../render/sprites';
 import { clear, fmt, h } from './dom';
+
+const icon = (name: string) => h('img', { class: 'px-icon sm', src: iconUrl(name), alt: '' });
 
 const BRANCHES: Branch[] = ['tools', 'logistics', 'processing', 'economy'];
 
 /** Skill tree dialog. Re-renders itself after every purchase. */
 export function researchDialog(game: Game, close: () => void): HTMLElement {
   const wrap = h('div', { class: 'research-wrap' });
-  const fpLabel = h('span');
+  const fpLabel = h('span', { class: 'fp-label' });
   const dialog = h(
     'div',
     { class: 'dialog wide panel', 'data-testid': 'research' },
     h(
       'div',
       { class: 'research-head' },
-      h('h2', null, '🔬 ', t('research.title')),
+      h('h2', null, t('research.title')),
       h('div', { style: 'display:flex;gap:10px;align-items:center' }, fpLabel, h('button', { onclick: close }, t('menu.back'), ' ', h('kbd', null, 'Esc'))),
     ),
     wrap,
@@ -24,7 +27,7 @@ export function researchDialog(game: Game, close: () => void): HTMLElement {
 
   const render = () => {
     const st = game.state;
-    fpLabel.textContent = `🔬 ${st.creative ? '∞' : st.fp.toFixed(1)}   💰 ${fmt(st.credits)}`;
+    fpLabel.replaceChildren(icon('flask'), st.creative ? '∞' : st.fp.toFixed(1), '  ', icon('coin'), fmt(st.credits));
     clear(wrap);
     const nodeEls = new Map<string, HTMLElement>();
     for (const b of BRANCHES) {
@@ -44,16 +47,15 @@ export function researchDialog(game: Game, close: () => void): HTMLElement {
               if (game.research(n.id)) render();
             },
           },
-          h('b', null, n.final ? '⭐ ' : '', t(`research.${n.id}.name`)),
+          h('b', null, t(`research.${n.id}.name`)),
           h('span', { class: 'd' }, t(`research.${n.id}.desc`)),
           status === 'owned'
-            ? h('span', { class: 'c' }, '✔ ', t('research.owned'))
+            ? h('span', { class: 'c' }, t('research.owned'))
             : h(
                 'span',
                 { class: 'c' },
-                h('span', { class: st.fp + 1e-9 >= n.cost.fp || st.creative ? 'fp' : 'bad' }, `🔬 ${n.cost.fp}`),
-                h('span', { class: st.credits + 1e-9 >= n.cost.credits || st.creative ? 'cr' : 'bad' }, `💰 ${fmt(n.cost.credits)}`),
-                status === 'locked' ? h('span', null, '🔒') : null,
+                h('span', { class: st.fp + 1e-9 >= n.cost.fp || st.creative ? 'fp' : 'bad' }, icon('flask'), String(n.cost.fp)),
+                h('span', { class: st.credits + 1e-9 >= n.cost.credits || st.creative ? 'cr' : 'bad' }, icon('coin'), fmt(n.cost.credits)),
               ),
         );
         nodeEls.set(n.id, btn);

@@ -156,16 +156,16 @@ pub fn generate(world: &mut World, seed: u32) {
                     if rd < 70 && noise2(xf / 40.0, yf / 9.0, seed + 11) > 0.66 {
                         data = 1; // shell limestone band
                     }
-                    if rd > 30 && noise2(xf / 16.0, yf / 16.0, seed + 13) > 0.74 {
+                    if rd > 30 && noise2(xf / 16.0, yf / 16.0, seed + 13) > 0.79 {
                         data = 2; // magnetite pocket
                     }
-                    if x >= l.cliff_start && rd > 10 && noise2(xf / 12.0, yf / 12.0, seed + 17) > 0.7 {
+                    if x >= l.cliff_start && rd > 10 && noise2(xf / 12.0, yf / 12.0, seed + 17) > 0.78 {
                         data = 2;
                     }
                     if data == 0 && rd < 40 && noise2(xf / 22.0, yf / 22.0, seed + 19) > 0.72 {
                         data = 3; // sandstone
                     }
-                    if rd > 20 && noise2(xf / 30.0, yf / 14.0, seed + 23) > 0.78 {
+                    if rd > 20 && noise2(xf / 30.0, yf / 14.0, seed + 23) > 0.82 {
                         m = if y > (h as f32 * 0.8) as i32 { WATER } else { EMPTY };
                         data = 0;
                     }

@@ -32,6 +32,7 @@ export const RESEARCH: ResearchNode[] = [
     effect: (s) => {
       s.vacRadius = 8;
       s.vacRate = 22;
+      s.reach = 68;
       s.emitRate = 16;
     },
   },
@@ -45,6 +46,7 @@ export const RESEARCH: ResearchNode[] = [
     effect: (s) => {
       s.vacRadius = 11;
       s.vacRate = 36;
+      s.reach = 84;
       s.emitRate = 26;
     },
   },

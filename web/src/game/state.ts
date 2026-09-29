@@ -21,6 +21,8 @@ export interface GameState {
     built: number;
   };
   alphaComplete: boolean;
+  /** Player feet position in cells (absent in old saves). */
+  player?: { x: number; y: number };
 }
 
 export function newState(seed: number, creative = false): GameState {

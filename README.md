@@ -49,7 +49,8 @@ sim/                 Rust: zellulärer Automat (→ WebAssembly)
   src/gen.rs         Weltgenerator (Küste)
 web/src/
   data/              Balancing-Tabellen: Werte, Kosten, Forschung, Aufträge
-  game/              Spiellogik (state.ts = pure Funktionen) + Game.ts (Loop, Kamera, Werkzeuge, Rendering)
+  game/              Spiellogik (state.ts = pure Funktionen), Player.ts (Figurenphysik), Game.ts (Loop, Kamera, Werkzeuge)
+  render/            WebGL2-Weltrenderer (Shader), Parallax-Hintergrund, Pixel-Art-Sprites, Partikel
   ui/                HUD, Menüs, Forschungsbaum
   save/              Speichern/Laden (RLE + Base64, localStorage, Export/Import)
   audio/             Prozeduraler Sound (WebAudio)

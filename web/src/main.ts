@@ -1,3 +1,6 @@
+import '@fontsource/pixelify-sans/400.css';
+import '@fontsource/pixelify-sans/600.css';
+import '@fontsource/silkscreen/400.css';
 import './ui/styles.css';
 import wasmUrl from './sim/sim.wasm?url';
 import { audio } from './audio/audio';
@@ -17,7 +20,11 @@ async function boot() {
   const loading = document.getElementById('loading');
   if (loading) loading.textContent = t('ui.loading');
 
-  const canvas = document.getElementById('game') as HTMLCanvasElement;
+  const canvases = {
+    bg: document.getElementById('bg') as HTMLCanvasElement,
+    world: document.getElementById('world') as HTMLCanvasElement,
+    fx: document.getElementById('game') as HTMLCanvasElement,
+  };
   const uiRoot = document.getElementById('ui')!;
   const sim = await Sim.load(
     // The single-file build inlines the wasm as a data: URL; decode it directly
@@ -34,7 +41,7 @@ async function boot() {
   let menus: Menus;
   const toast = (msg: string, kind?: 'info' | 'good' | 'warn') => hud?.toast(msg, kind);
 
-  const game = new Game(canvas, sim, settings, {
+  const game = new Game(canvases, sim, settings, {
     toast,
     contractDone: (id) => toast(t('contract.done', { name: t(`contract.${id}.title`) }), 'good'),
     researchDone: (id) => toast(t('research.unlocked', { name: t(`research.${id}.name`) }), 'good'),
@@ -88,8 +95,10 @@ async function boot() {
   applySettings();
 
   // Title background: a generated coast.
+  game.attract = true;
   game.newGame(12345);
-  game.camera.zoom = 2;
+  game.camera.zoom = 2.5;
+  game.snapCamera();
   menus.showTitle();
 
   // HUD visibility follows the menu state

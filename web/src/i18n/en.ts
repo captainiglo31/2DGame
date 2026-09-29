@@ -32,6 +32,14 @@ export const en: Record<string, string> = {
   'menu.aboutText':
     'Abyssal Drift is a factory game where every grain of sand is simulated. This alpha contains phase 1: the coast. The shelf and the deep sea follow.',
 
+  'menu.yes': 'Yes',
+  'menu.no': 'Cancel',
+  'stats.playTime': 'Play time',
+  'stats.earned': 'Total earned',
+  'stats.built': 'Cells built',
+  'stats.contracts': 'Contracts done',
+  'stats.contract': 'Contract',
+  'stats.research': 'Researched',
   'hud.credits': 'Credits',
   'hud.fp': 'Research',
   'hud.tank': 'Tank',
@@ -122,9 +130,9 @@ export const en: Record<string, string> = {
   'research.vac3.name': 'Vacuum tank III',
   'research.vac3.desc': 'Tank capacity 2500.',
   'research.rad1.name': 'Wide nozzle',
-  'research.rad1.desc': 'Bigger radius, faster sucking and ejecting.',
+  'research.rad1.desc': 'Bigger radius, more reach, faster sucking and ejecting.',
   'research.rad2.name': 'Broad nozzle',
-  'research.rad2.desc': 'Even bigger radius and throughput.',
+  'research.rad2.desc': 'Even bigger radius, reach and throughput.',
   'research.drill1.name': 'Pneumatic drill',
   'research.drill1.desc': 'Hand drill 2.5× faster, bigger radius.',
   'research.drill2.name': 'Diamond bit',
@@ -169,7 +177,7 @@ export const en: Record<string, string> = {
   'contract.goal.deliver': 'Deliver {mat}',
   'contract.goal.research': 'Research {name}',
   'contract.c1.title': 'First load',
-  'contract.c1.hint': 'Pick the vacuum (1), hold LMB over sand, then move over the green base funnel and eject it with RMB.',
+  'contract.c1.hint': 'Pick the vacuum (1) and hold LMB over sand. Then walk to the base and eject the sand into the green funnel with RMB.',
   'contract.c2.title': 'Belt idea',
   'contract.c2.hint': 'Open research (T) and unlock conveyors. Build a line from the dunes to the base.',
   'contract.c3.title': 'Gravel pit',
@@ -191,7 +199,7 @@ export const en: Record<string, string> = {
   'welcome.intro':
     'You run a small resource station on the beach. Everything here is real matter: sand trickles, water flows, sludge settles. Deliver material into the green funnel of your BASE to earn credits and research.',
   'welcome.steps':
-    'Vacuum (1): hold the left mouse button to suck sand into your tank.\nOver the base funnel, eject it with the right mouse button – that earns credits.\nSpend credits and research (T) to unlock conveyors, screens, dryers and more.\nYour current contract with tips is shown top right.',
+    'Walk with A/D, jump with W or Space – hold it to fire the jetpack.\nVacuum (1): hold the left mouse button to suck sand into your tank. Tools only reach so far.\nOver the base funnel, eject it with the right mouse button – that earns credits.\nSpend credits and research (T) to unlock conveyors, screens, dryers and more.\nYour current contract with tips is shown top right.',
   'welcome.go': 'Let’s go!',
 
   'end.title': 'Alpha complete!',
@@ -222,5 +230,5 @@ export const en: Record<string, string> = {
 
   'help.title': 'Controls',
   'help.rows':
-    '1–4|Select tool\nLMB|Use tool (suck / drill / build / remove)\nRMB|Eject (vacuum) · remove (build)\nQ / E|Cycle tank material\nR|Rotate (conveyor, pipe)\nWheel|Zoom · with Ctrl: brush size\nWASD / arrows / middle mouse|Move camera\nSpace|Camera to base\nT|Research\nC|Toggle contracts\nF3|Debug overlay\nEsc|Pause / menu\nTouch|1 finger: tool · 2 fingers: camera & zoom',
+    'A / D|Walk\nW / Space|Jump · hold: jetpack (fuel recharges on the ground)\n1–4|Select tool\nLMB|Use tool (suck / drill / build / remove)\nRMB|Eject (vacuum) · remove (build)\nQ / E|Cycle tank material\nR|Rotate (conveyor, pipe)\nWheel|Zoom · with Ctrl: brush size\nT|Research\nC|Toggle contracts\nF3|Debug overlay\nEsc|Pause / menu\nTouch|Arrow buttons: walk & jump · 1 finger: tool · 2 fingers: zoom',
 };

@@ -46,6 +46,11 @@ pub extern "C" fn render(x0: i32, y0: i32, x1: i32, y1: i32) {
 }
 
 #[no_mangle]
+pub extern "C" fn pack(y0: i32, y1: i32) {
+    w().pack(y0, y1);
+}
+
+#[no_mangle]
 pub extern "C" fn mat_ptr() -> *const u8 {
     w().mat.as_ptr()
 }
