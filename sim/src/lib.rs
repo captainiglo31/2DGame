@@ -100,7 +100,7 @@ pub extern "C" fn set_param(id: u32, v: i32) {
         5 => p.mag_r = v.clamp(1, 16),
         6 => p.mag_samples = u.min(64),
         7 => p.drill_p = u,
-        8 => p.drill_r = v.clamp(1, 6),
+        8 => p.drill_r = v.clamp(1, 256),
         9 => p.sun = u,
         10 => p.random_ticks = u.min(50_000),
         11 => p.tide_on = v != 0,

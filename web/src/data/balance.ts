@@ -42,8 +42,8 @@ export const BUILDINGS: BuildDef[] = [
   { id: 'sieve', mat: M.SIEVE, cost: 5, mode: 'brush', unlock: 'sieve' },
   { id: 'dryer', mat: M.DRYER, cost: 30, mode: 'brush', unlock: 'dryer' },
   { id: 'pipe', mat: 0, cost: 6, mode: 'pipe', unlock: 'pipe' },
-  { id: 'magnet', mat: M.MAGNET, cost: 150, mode: 'stamp', unlock: 'magnet' },
-  { id: 'drill', mat: M.DRILL, cost: 250, mode: 'stamp', unlock: 'drillm' },
+  { id: 'magnet', mat: M.MAGNET, cost: 60, mode: 'stamp', unlock: 'magnet' },
+  { id: 'drill', mat: M.DRILL, cost: 80, mode: 'stamp', unlock: 'drillm' },
   { id: 'furnace', mat: M.FURNACE, cost: 120, mode: 'brush', unlock: 'furnace' },
   { id: 'inlet', mat: M.INLET, cost: 400, mode: 'brush', unlock: 'inlet' },
 ];
@@ -70,7 +70,7 @@ export const BASE_STATS = {
   magR: 6,
   magSamples: 6,
   drillP: 0.04,
-  drillR: 2,
+  drillR: 40, // shaft depth of auto drills
   sun: 0.08,
 };
 

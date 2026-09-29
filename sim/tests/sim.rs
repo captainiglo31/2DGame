@@ -172,16 +172,79 @@ fn magnet_attracts_magnetite() {
 }
 
 #[test]
-fn drill_breaks_rock() {
-    let mut w = boxed(12, 12);
+fn drill_digs_a_shaft_and_outputs_on_top() {
+    let mut w = boxed(60, 40);
     w.params.drill_p = 65536;
-    for x in 1..11 {
-        w.set(x, 10, ROCK, 2);
+    for y in 10..39 {
+        for x in 1..59 {
+            w.set(x, y, ROCK, 2);
+        }
     }
-    w.place(5, 9, DRILL);
-    run(&mut w, 200);
-    assert!(w.count(ROCK) < 10);
-    assert!(w.count(MAGNETITE) + w.count(GRAVEL) > 0);
+    // 3x3 drill sitting on the rock surface
+    for y in 7..10 {
+        for x in 29..32 {
+            w.place(x, y, DRILL);
+        }
+    }
+    // a belt at head height carries the output away
+    for x in 32..58 {
+        w.place(x, 7, CONV_R);
+    }
+    for x in 2..29 {
+        w.place(x, 7, CONV_L);
+    }
+    w.params.conv_p = 65536;
+    let rock0 = w.count(ROCK);
+    run(&mut w, 600);
+    let dug = rock0 - w.count(ROCK);
+    assert!(dug >= 80, "dug {dug}"); // 3 columns x 29 rows of rock
+    // the shaft below the drill is open, everything came out on top
+    assert_eq!(w.count(MAGNETITE) + w.count(GRAVEL), dug);
+    for y in 10..20 {
+        assert_eq!(w.get(30, y), EMPTY);
+    }
+}
+
+#[test]
+fn drill_pumps_loose_sand_up() {
+    let mut w = boxed(40, 30);
+    w.params.drill_p = 65536;
+    for y in 10..29 {
+        for x in 1..39 {
+            w.set(x, y, WETSAND, 0);
+        }
+    }
+    for x in 19..22 {
+        w.place(x, 9, DRILL);
+    }
+    for x in 22..39 {
+        w.place(x, 9, CONV_R);
+    }
+    for x in 1..19 {
+        w.place(x, 9, CONV_L);
+    }
+    w.params.conv_p = 65536;
+    let before = w.count(WETSAND);
+    run(&mut w, 600);
+    assert_eq!(w.count(WETSAND), before, "sand is conserved");
+    // sand has been lifted above the surface
+    let above = (0..9).flat_map(|y| (1..39).map(move |x| (x, y))).filter(|(x, y)| w.get(*x, *y) == WETSAND).count();
+    assert!(above >= 60, "lifted {above}");
+}
+
+#[test]
+fn flat_sieve_shakes_coarse_grains_off() {
+    let mut w = boxed(30, 30);
+    for x in 10..20 {
+        w.place(x, 15, SIEVE);
+    }
+    for x in 13..17 {
+        w.set(x, 14, GRAVEL, 0);
+        w.set(x, 13, GRAVEL, 0);
+    }
+    run(&mut w, 2000);
+    let on_sieve = (0..15).flat_map(|y| (10..20).map(move |x| (x, y))).filter(|(x, y)| w.get(*x, *y) == GRAVEL).count();
+    assert!(on_sieve < 8, "{on_sieve} still on the sieve");
 }
 
 #[test]

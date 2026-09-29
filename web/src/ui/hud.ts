@@ -25,6 +25,7 @@ export class Hud {
   private context = h('div', { class: 'context panel' });
   private contract = h('div', { class: 'contract panel' });
   private toasts = h('div', { class: 'toasts' });
+  private hover = h('div', { class: 'hover-info panel' });
   private contextKey = '';
   private contractKey = '';
   private coarse = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
@@ -66,9 +67,11 @@ export class Hud {
         this.contract,
       ),
       h('div', { class: 'hud-bottom' }, this.context, toolbar),
+      this.hover,
       this.toasts,
     );
     this.contract.addEventListener('click', () => this.toggleContract());
+    if (this.coarse || (typeof innerWidth !== 'undefined' && innerWidth < 720)) this.contract.classList.add('collapsed');
   }
 
   toggleContract() {
@@ -96,6 +99,9 @@ export class Hud {
     this.tankBar.classList.toggle('full', total >= cap);
     setText(this.env, `${g.isNight() ? '🌙 ' + t('hud.night') : '☀️ ' + t('hud.day')} · ${g.tideRising() ? '🌊 ' + t('hud.tide.rising') : '〰️ ' + t('hud.tide.falling')}`);
     for (const [id, b] of this.toolButtons) b.classList.toggle('active', g.tool === id);
+    const hm = g.hoverMaterial();
+    this.hover.style.display = hm > 0 && !this.coarse ? '' : 'none';
+    if (hm > 0) setText(this.hover, t(`mat.${MAT_KEYS[hm]}`));
     this.updateContext();
     this.updateContract();
   }

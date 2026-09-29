@@ -606,14 +606,43 @@ input[type='range'] {
   border-color: var(--gold);
 }
 
+.hover-info {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  padding: 0.3em 0.7em;
+  font-size: 0.85em;
+  color: var(--muted);
+  pointer-events: none !important;
+}
+
 @media (max-width: 720px) {
   .hud-top {
-    max-width: calc(100vw - 20px);
+    max-width: calc(100vw - 130px);
+    gap: 4px;
+  }
+  .hud-top .label {
+    display: none;
   }
   .hud-right {
-    top: auto;
-    bottom: 150px;
-    width: min(280px, 70vw);
+    width: min(240px, 55vw);
+  }
+  .hud-buttons button kbd,
+  .tool kbd {
+    display: none;
+  }
+  .context {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    max-width: calc(100vw - 16px);
+    -webkit-overflow-scrolling: touch;
+  }
+  .context .desc {
+    display: none;
+  }
+  .chip {
+    flex: none;
   }
   .tool {
     min-width: 3.8em;

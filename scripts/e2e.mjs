@@ -45,6 +45,9 @@ try {
   check(true, 'title screen');
 
   await page.click('[data-testid=new-game]');
+  await page.waitForSelector('[data-testid=welcome]');
+  await page.screenshot({ path: `${OUT}/02a-welcome.png` });
+  await page.click('[data-testid=welcome-ok]');
   await page.waitForTimeout(800);
   await page.screenshot({ path: `${OUT}/02-start.png` });
 
@@ -131,6 +134,50 @@ try {
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
   await page.screenshot({ path: `${OUT}/07-mobile.png` });
+
+  // Factory scenario in creative mode: a drill on the dune feeds a belt into the base funnel.
+  await page.setViewportSize({ width: 1280, height: 720 });
+  const factory = await page.evaluate(async () => {
+    const { game, sim } = window.abyssal;
+    game.newGame(777, true);
+    game.paused = false;
+    const c = sim.core;
+    const M = { WALL: 13, CONV_L: 14, DRILL: 21 };
+    // find dune surface right of the base
+    const x0 = c.x + c.w + 20;
+    let sy = 0;
+    while (sim.get(x0 + 1, sy) === 0) sy++;
+    // drill 3x3 sitting on the surface, belt at head height leading left above the funnel
+    const top = Math.min(sy - 3, c.y - 8);
+    for (let y = top; y < sy; y++) for (let x = x0; x < x0 + 3; x++) sim.place(x, y, M.DRILL);
+    // fill gap below drill with walls if the drill floats
+    for (let x = c.x + c.w / 2; x < x0; x++) sim.place(x, top, M.CONV_L);
+    for (let x = x0 + 3; x < x0 + 12; x++) sim.place(x, top, M.CONV_L);
+    const before = game.state.stats.delivered[3] ?? 0;
+    await new Promise((r) => setTimeout(r, 8000));
+    const d = game.state.stats.delivered;
+    return { sand: (d[3] ?? 0) - before, gravel: d[7] ?? 0, all: d, top, sy };
+  });
+  console.log('factory', JSON.stringify(factory));
+  check(factory.sand + factory.gravel > 30, `drill + belt deliver automatically (${factory.sand + factory.gravel} cells in 8 s)`);
+  await page.evaluate(() => {
+    const g = window.abyssal.game;
+    const c = g.sim.core;
+    g.camera.x = c.x + 40;
+    g.camera.y = c.y;
+    g.camera.zoom = 4;
+  });
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${OUT}/08-factory.png` });
+  // night render with glow
+  await page.evaluate(() => {
+    const { game, sim } = window.abyssal;
+    const c = sim.core;
+    for (let x = c.x - 20; x < c.x - 10; x++) sim.place(x, c.y - 2, 18);
+    game.dayTime = 0.75;
+  });
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: `${OUT}/09-night.png` });
 
   const perf = await page.evaluate(() => window.abyssal.game.debugInfo());
   console.log('perf', perf);

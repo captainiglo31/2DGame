@@ -43,7 +43,7 @@ impl Default for Params {
             mag_r: 6,
             mag_samples: 6,
             drill_p: prob(0.04),
-            drill_r: 2,
+            drill_r: 40,
             sun: prob(0.08),
             random_ticks: 1500,
             tide_on: true,
@@ -347,10 +347,26 @@ impl World {
                 self.wake(x, y);
                 return;
             }
-            SIEVE => {
-                if props(m).fine && self.sieve_through(x, y, m, cur) {
+            DRILL => {
+                // drill heads shed their output to the sides
+                let d = if self.rand() & 1 == 0 { -1 } else { 1 };
+                if self.try_move(x, y, d, 0, cur) || self.try_move(x, y, -d, 0, cur) {
                     return;
                 }
+            }
+            SIEVE => {
+                if props(m).fine {
+                    if self.sieve_through(x, y, m, cur) {
+                        return;
+                    }
+                } else if self.chance(self.params.sieve_p / 2) {
+                    // the screen shakes coarse grains sideways until they drop off an edge
+                    let d = if self.rand() & 1 == 0 { -1 } else { 1 };
+                    if self.try_move(x, y, d, 0, cur) {
+                        return;
+                    }
+                }
+                self.wake(x, y);
             }
             _ => {}
         }
@@ -552,19 +568,17 @@ impl World {
         }
     }
 
+    /// Intake funnels only swallow what lands on top of them, so burying one
+    /// in a dune is not a free money printer.
     fn inlet(&mut self, x: i32, y: i32) {
-        for (dx, dy) in [(0, -1), (-1, 0), (1, 0), (0, 1)] {
-            let nx = x + dx;
-            let ny = y + dy;
-            if !self.inb(nx, ny) {
-                continue;
-            }
-            let j = self.idx(nx, ny);
-            let m = self.mat[j];
-            if is_loose(m) {
-                self.absorbed[m as usize] += 1;
-                self.set(nx, ny, EMPTY, 0);
-            }
+        if !self.inb(x, y - 1) {
+            return;
+        }
+        let j = self.idx(x, y - 1);
+        let m = self.mat[j];
+        if is_loose(m) {
+            self.absorbed[m as usize] += 1;
+            self.set(x, y - 1, EMPTY, 0);
         }
     }
 
@@ -627,29 +641,53 @@ impl World {
         self.wake(x, y);
     }
 
+    /// Shaft drill: every top cell of a drill scans its column downwards
+    /// (up to `drill_r` cells), breaks the first rock or lifts the first loose
+    /// cell it meets and outputs it on top of itself. Blocked output = no work.
+    /// Loose material sliding into the shaft is simply pumped up again, so a
+    /// drill in a dune works as an endless sand pump once its output is carried away.
     fn drill(&mut self, x: i32, y: i32) {
-        if !self.chance(self.params.drill_p) {
+        if self.get(x, y - 1) == DRILL || !self.inb(x, y - 1) {
+            return;
+        }
+        let out = self.idx(x, y - 1);
+        let om = self.mat[out];
+        if !(om == EMPTY || kind(om) == Kind::Gas) {
             self.wake(x, y);
             return;
         }
-        let r = self.params.drill_r;
-        let side = (2 * r + 1) as u32;
-        let dx = (self.rand() % side) as i32 - r;
-        let dy = (self.rand() % side) as i32 - r;
-        let nx = x + dx;
-        let ny = y + dy;
-        if self.inb(nx, ny) && self.mat[self.idx(nx, ny)] == ROCK {
-            self.break_rock(nx, ny);
-        }
         self.wake(x, y);
+        if !self.chance(self.params.drill_p) {
+            return;
+        }
+        let depth = self.params.drill_r;
+        let mut ny = y + 1;
+        while ny <= y + depth && ny < self.h {
+            let j = self.idx(x, ny);
+            let m = self.mat[j];
+            match m {
+                DRILL | EMPTY | STEAM => {}
+                ROCK => {
+                    let drop = self.rock_drop(j);
+                    self.set(x, ny, EMPTY, 0);
+                    self.set(x, y - 1, drop, 0);
+                    return;
+                }
+                _ if is_loose(m) => {
+                    self.set(x, ny, EMPTY, 0);
+                    self.set(x, y - 1, m, 0);
+                    return;
+                }
+                _ => return, // bedrock or a structure stops the shaft
+            }
+            ny += 1;
+        }
     }
 
-    /// Turn a rock cell into its loose drop.
-    pub fn break_rock(&mut self, x: i32, y: i32) {
-        let i = self.idx(x, y);
+    fn rock_drop(&mut self, i: usize) -> u8 {
         let vein = self.data(i);
         let r = self.rand() % 100;
-        let drop = match vein {
+        match vein {
             1 => {
                 if r < 75 {
                     SHELL
@@ -672,7 +710,13 @@ impl World {
                     SAND
                 }
             }
-        };
+        }
+    }
+
+    /// Turn a rock cell into its loose drop.
+    pub fn break_rock(&mut self, x: i32, y: i32) {
+        let i = self.idx(x, y);
+        let drop = self.rock_drop(i);
         self.set(x, y, drop, 0);
     }
 

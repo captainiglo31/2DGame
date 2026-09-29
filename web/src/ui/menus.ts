@@ -128,6 +128,29 @@ export class Menus {
     if (this.inGame && !(await this.confirm(t('menu.confirmNew')))) return;
     this.host.newGame(creative);
     this.enterGame();
+    if (this.host.settings.tutorialHints && !creative) this.showWelcome();
+  }
+
+  showWelcome() {
+    this.push(() =>
+      h(
+        'div',
+        { class: 'overlay' },
+        h(
+          'div',
+          { class: 'dialog panel', 'data-testid': 'welcome' },
+          h('h2', null, '🌊 ', t('welcome.title')),
+          h('p', { style: 'line-height:1.5' }, t('welcome.intro')),
+          h('ol', { style: 'line-height:1.6;padding-left:1.2em' }, ...t('welcome.steps').split('\n').map((s) => h('li', null, s))),
+          h(
+            'div',
+            { class: 'actions' },
+            h('button', { onclick: () => this.showHelp() }, t('menu.help')),
+            h('button', { class: 'primary', 'data-testid': 'welcome-ok', onclick: () => this.closeAll() }, t('welcome.go')),
+          ),
+        ),
+      ),
+    );
   }
 
   enterGame() {

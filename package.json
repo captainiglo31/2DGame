@@ -17,6 +17,7 @@
     "check": "npm run test:rust && npm run test && npm run build && npm run e2e"
   },
   "devDependencies": {
+    "@types/node": "^22.20.4",
     "playwright-core": "^1.63.0",
     "typescript": "^5.9.3",
     "vite": "^8.3.1",

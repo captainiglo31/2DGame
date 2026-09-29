@@ -95,7 +95,7 @@ export const en: Record<string, string> = {
   'build.magnet': 'Magnetic separator',
   'build.magnet.desc': 'Pulls magnetite out of passing material (3×3).',
   'build.drill': 'Auto drill',
-  'build.drill.desc': 'Mines adjacent rock automatically (3×3).',
+  'build.drill.desc': 'Shaft drill (3×3): digs straight down up to 40 cells and outputs rock or sand on top. Attach conveyors at head height!',
   'build.furnace': 'Furnace',
   'build.furnace.desc': 'Hot dryer: melts sand into glass granules.',
   'build.inlet': 'Intake funnel',
@@ -148,9 +148,9 @@ export const en: Record<string, string> = {
   'research.furnace.name': 'Furnace',
   'research.furnace.desc': 'Melts sand into valuable glass granules.',
   'research.drillm.name': 'Auto drill',
-  'research.drillm.desc': 'Stationary drills mine rock on their own.',
+  'research.drillm.desc': 'Shaft drills dig down and lift rock or dune sand to the surface.',
   'research.drillm2.name': 'Drill towers',
-  'research.drillm2.desc': 'Auto drills faster and with more reach.',
+  'research.drillm2.desc': 'Auto drills 2.4× faster and twice as deep (80).',
   'research.price1.name': 'Trader network',
   'research.price1.desc': '+15% sale value.',
   'research.price2.name': 'Export licence',
@@ -184,6 +184,13 @@ export const en: Record<string, string> = {
   'contract.c8.hint': 'Furnaces melt dry sand into glass granules. Dry wet sand first.',
   'contract.c9.title': 'Off to the shelf',
   'contract.c9.hint': 'Research the shelf expedition in the economy branch.',
+
+  'welcome.title': 'Welcome to the coast',
+  'welcome.intro':
+    'You run a small resource station on the beach. Everything here is real matter: sand trickles, water flows, sludge settles. Deliver material into the green funnel of your BASE to earn credits and research.',
+  'welcome.steps':
+    'Vacuum (1): hold the left mouse button to suck sand into your tank.\nOver the base funnel, eject it with the right mouse button – that earns credits.\nSpend credits and research (T) to unlock conveyors, screens, dryers and more.\nYour current contract with tips is shown top right.',
+  'welcome.go': 'Let’s go!',
 
   'end.title': 'Alpha complete!',
   'end.text': 'The shelf expedition is ready. Phase 2 (offshore platforms, hydrocyclones, currents) comes with the beta. You can keep playing.',

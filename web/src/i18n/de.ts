@@ -100,7 +100,7 @@ export const de: Record<string, string> = {
   'build.magnet': 'Magnetabscheider',
   'build.magnet.desc': 'Zieht Magnetit aus vorbeifallendem Material an (3×3).',
   'build.drill': 'Auto-Bohrer',
-  'build.drill.desc': 'Baut angrenzenden Fels automatisch ab (3×3).',
+  'build.drill.desc': 'Förderbohrer (3×3): bohrt senkrecht bis 40 Zellen tief und gibt Gestein oder Sand oben aus. Förderbänder auf Kopfhöhe seitlich anschließen!',
   'build.furnace': 'Schmelzofen',
   'build.furnace.desc': 'Heißer Trockner: Schmilzt Sand zu Glasgranulat.',
   'build.inlet': 'Annahmetrichter',
@@ -154,9 +154,9 @@ export const de: Record<string, string> = {
   'research.furnace.name': 'Schmelzofen',
   'research.furnace.desc': 'Schmilzt Sand zu wertvollem Glasgranulat.',
   'research.drillm.name': 'Auto-Bohrer',
-  'research.drillm.desc': 'Stationäre Bohrer bauen Fels selbstständig ab.',
+  'research.drillm.desc': 'Förderbohrer bohren Schächte und fördern Gestein oder Dünensand nach oben.',
   'research.drillm2.name': 'Bohrtürme',
-  'research.drillm2.desc': 'Auto-Bohrer schneller und mit größerer Reichweite.',
+  'research.drillm2.desc': 'Auto-Bohrer 2,4× schneller und doppelt so tief (80).',
   'research.price1.name': 'Händlernetz',
   'research.price1.desc': '+15 % Verkaufserlös.',
   'research.price2.name': 'Exportlizenz',
@@ -192,6 +192,14 @@ export const de: Record<string, string> = {
   'contract.c8.hint': 'Schmelzöfen verwandeln trockenen Sand in Glasgranulat. Nasser Sand muss vorher getrocknet werden.',
   'contract.c9.title': 'Aufbruch zum Schelf',
   'contract.c9.hint': 'Erforsche die Schelf-Expedition im Zweig Wirtschaft.',
+
+  // welcome
+  'welcome.title': 'Willkommen an der Küste',
+  'welcome.intro':
+    'Du leitest eine kleine Rohstoffstation am Strand. Alles hier ist echte Materie: Sand rieselt, Wasser fließt, Schlick setzt sich ab. Liefere Material in den grünen Trichter deiner BASIS, um Credits und Forschung zu verdienen.',
+  'welcome.steps':
+    'Sauger (1): Linke Maustaste saugt Sand in den Tank.\nÜber dem Basis-Trichter mit der rechten Maustaste auswerfen – das bringt Credits.\nMit Credits und Forschung (T) schaltest du Förderbänder, Siebe, Trockner und mehr frei.\nOben rechts steht dein aktueller Auftrag mit Tipps.',
+  'welcome.go': 'Los geht’s!',
 
   // alpha end
   'end.title': 'Alpha abgeschlossen!',

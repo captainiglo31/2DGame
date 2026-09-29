@@ -85,7 +85,10 @@ export class Game {
   private actionFlags = { vac: false, drill: false, emit: false };
   private lastStamp = { x: -99, y: -99 };
   private deliveredFlash = 0;
-  private dayTime = 0.12;
+  private floaters: { x: number; y: number; text: string; age: number }[] = [];
+  private pendingIncome = 0;
+  private incomeTimer = 0;
+  dayTime = 0.12;
 
   constructor(canvas: HTMLCanvasElement, sim: Sim, settings: Settings, events: GameEvents) {
     this.canvas = canvas;
@@ -115,8 +118,10 @@ export class Game {
     this.sim.api.set_tick(0);
     this.computeSurface();
     this.afterStateChange();
+    this.camera.zoom = 3;
     this.focusCore();
     this.dayTime = 0.12;
+    this.floaters = [];
   }
 
   load(f: SaveFile) {
@@ -130,7 +135,9 @@ export class Game {
     else this.drawBackground();
     this.sim.collectAbsorbed();
     this.afterStateChange();
+    this.camera.zoom = 3;
     this.focusCore();
+    this.floaters = [];
   }
 
   save(slot: Slot): boolean {
@@ -246,6 +253,7 @@ export class Game {
       }
       this.simMs = this.simMs * 0.9 + (performance.now() - t0) * 0.1;
       this.collectDeliveries();
+      this.updateFloaters(dt);
       this.autosave(dt);
       this.warnCooldown = Math.max(0, this.warnCooldown - dt);
       this.deliveredFlash = Math.max(0, this.deliveredFlash - dt);
@@ -288,7 +296,26 @@ export class Game {
       audio.play('sell');
       this.deliveredFlash = 0.4;
     }
+    this.pendingIncome += gained.credits;
     this.checkContracts();
+  }
+
+  private updateFloaters(dt: number) {
+    this.incomeTimer += dt;
+    if (this.incomeTimer > 0.6 && this.pendingIncome >= 1) {
+      const c = this.sim.core;
+      this.floaters.push({ x: c.x + c.w / 2 + (Math.random() - 0.5) * 8, y: c.y - 4, text: `+${Math.floor(this.pendingIncome)}¢`, age: 0 });
+      this.pendingIncome = 0;
+      this.incomeTimer = 0;
+    }
+    for (const f of this.floaters) f.age += dt;
+    this.floaters = this.floaters.filter((f) => f.age < 1.6);
+  }
+
+  /** Material under the cursor, for the HUD. */
+  hoverMaterial(): number {
+    if (!this.pointer.inside) return -1;
+    return this.sim.get(Math.floor(this.pointer.wx), Math.floor(this.pointer.wy));
   }
 
   checkContracts() {
@@ -783,11 +810,58 @@ export class Game {
     if (this.settings.nightDarkness && light < 1) {
       ctx.fillStyle = `rgba(5, 10, 35, ${(1 - light) * 0.5})`;
       ctx.fillRect(0, 0, cw, ch);
+      if (light < 0.7) this.drawGlow(ctx, vx0, vy0, vx1, vy1, 1 - light);
     }
 
     this.drawCore(ctx);
+    this.drawFloaters(ctx);
     if (!this.paused) this.drawCursor(ctx);
     if (this.debug || this.settings.showFps) this.drawDebug(ctx);
+  }
+
+  /** Heat machines glow at night (one glow per 6×6 block, capped). */
+  private drawGlow(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, strength: number) {
+    const mat = this.sim.mat;
+    const w = this.sim.w;
+    const z = this.camera.zoom;
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const seen = new Set<number>();
+    for (let y = y0; y < y1 && seen.size < 300; y++) {
+      for (let x = x0; x < x1; x++) {
+        const m = mat[y * w + x];
+        if (m !== M.DRYER && m !== M.FURNACE) continue;
+        const key = ((y / 6) | 0) * 1024 + ((x / 6) | 0);
+        if (seen.has(key)) continue;
+        seen.add(key);
+        const s = this.worldToScreen(x + 0.5, y + 0.5);
+        const r = (m === M.FURNACE ? 14 : 9) * z;
+        const g = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, r);
+        g.addColorStop(0, m === M.FURNACE ? `rgba(255,140,40,${0.35 * strength})` : `rgba(255,90,40,${0.22 * strength})`);
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(s.x - r, s.y - r, r * 2, r * 2);
+      }
+    }
+    ctx.restore();
+  }
+
+  private drawFloaters(ctx: CanvasRenderingContext2D) {
+    if (!this.floaters.length) return;
+    ctx.save();
+    ctx.font = 'bold 15px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    for (const f of this.floaters) {
+      const p = this.worldToScreen(f.x, f.y);
+      const rise = this.settings.reducedMotion ? 0 : f.age * 30;
+      ctx.globalAlpha = Math.max(0, 1 - f.age / 1.6);
+      ctx.fillStyle = '#ffd24a';
+      ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+      ctx.lineWidth = 3;
+      ctx.strokeText(f.text, p.x, p.y - rise);
+      ctx.fillText(f.text, p.x, p.y - rise);
+    }
+    ctx.restore();
   }
 
   private drawCore(ctx: CanvasRenderingContext2D) {

@@ -116,7 +116,7 @@ export const RESEARCH: ResearchNode[] = [
     requires: ['drillm'],
     effect: (s) => {
       s.drillP = 0.12;
-      s.drillR = 3;
+      s.drillR = 80;
     },
   },
   // ---- economy
