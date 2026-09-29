@@ -27,7 +27,7 @@ Das 2-Gitter-Modell aus dem GDD (Euler-Strömungsfeld + Partikel) ist **bewusst 
 - ✅ Rust-Crate `sim/` (cdylib → wasm32, ohne Abhängigkeiten, 75 KB)
 - ✅ Vite + TypeScript Frontend `web/`
 - ✅ Tests: `cargo test` (Physik), `vitest` (Logik), Playwright-Smoke-Test mit Screenshots
-- ✅ GitHub-Actions: Tests + Build + Deployment auf GitHub Pages
+- ✅ GitHub-Actions: Tests + Build, Einzeldatei-Download als Artefakt, Deployment auf GitHub Pages (vom Hauptbranch)
 - ✅ Einzeldatei-Build (`npm run build:single`) zum Teilen ohne Server
 
 **Abnahme:** `npm run check` ist grün.
@@ -53,7 +53,7 @@ Das 2-Gitter-Modell aus dem GDD (Euler-Strömungsfeld + Partikel) ist **bewusst 
 - ✅ Sauger (Tank, Radius, Filter „Wasser mitsaugen“), Auswerfen, Handbohrer
 
 ## M4 – Fabrikstrukturen ✅
-- ✅ Treibholz-Wand, Förderband (beide Richtungen), Rüttelsieb, Trockner, Schmelzofen, Magnetabscheider, Auto-Bohrer, Rohrleitung (4 Richtungen, auch Steigrohr), zusätzliche Annahmetrichter
+- ✅ Treibholz-Wand, Förderband (beide Richtungen), Rüttelsieb (schüttelt Grobes ab, nasser Sand verstopft), Trockner, Schmelzofen, Magnetabscheider, Förderbohrer (Schacht bis 40/80 tief, fördert Gestein oder Dünensand nach oben, Rückstau ohne Abtransport), Rohrleitung (4 Richtungen, auch Steigrohr), zusätzliche Annahmetrichter (nehmen nur von oben an)
 - ✅ Bauen per Pinsel/Linie/Stempel, Richtung aus Ziehrichtung, Abriss mit 50 % Erstattung
 - ✅ Baukosten, Vorschau (rot = nicht möglich)
 
@@ -72,7 +72,8 @@ Das 2-Gitter-Modell aus dem GDD (Euler-Strömungsfeld + Partikel) ist **bewusst 
 
 ## M7 – Balancing & QA 🟡 *(laufend)*
 - ✅ Balancing-Tabellen + automatischer Balancing-Test (Forschung/Credits reichen für den Pfad zum Finale)
-- ✅ Browser-Smoke-Test (Saugen → Liefern → Bauen → Forschung → Speichern) mit Screenshots
+- ✅ Browser-Smoke-Test (Saugen → Liefern → Bauen → Forschung → Speichern → automatische Fabrik → Nacht) mit Screenshots
+- ✅ Weltgenerator-Statistik (`cargo run --release --example stats`): alle Rohstoffe erreichbar, ~2 ms/Tick
 - ⬜ Echte Spieltests: Zeit bis zum Alpha-Ende messen (Ziel 60–120 min)
 - ⬜ Feinschliff der Physik-Parameter nach Feedback
 - ⬜ Performance-Budget auf schwachen Laptops / Handys messen

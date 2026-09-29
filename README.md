@@ -7,9 +7,9 @@ Details: [Roadmap](docs/ROADMAP.md) · [Game Design Document](docs/GDD.md) · [B
 
 ## Spielen
 
-- **Online:** Nach jedem Push baut GitHub Actions das Spiel und veröffentlicht es auf GitHub Pages. Einmalig einrichten: *Settings → Pages → Source: GitHub Actions*.
+- **Einzeldatei (sofort):** Jeder CI-Lauf legt das Artefakt `abyssal-drift-single-file` ab (*Actions → Lauf → Artifacts*). Entpacken und `index.html` per Doppelklick im Browser öffnen, ein Server ist nicht nötig. Lokal erzeugt `npm run build:single` dieselbe Datei.
+- **Online:** Pushes auf `main` werden automatisch auf GitHub Pages veröffentlicht. Einmalig einrichten: *Settings → Pages → Source: GitHub Actions*.
 - **Lokal:** siehe unten (`npm run dev`).
-- **Einzeldatei:** `npm run build:single` erzeugt `dist-single/index.html`. Die Datei läuft per Doppelklick ohne Server.
 
 ## Entwicklung
 

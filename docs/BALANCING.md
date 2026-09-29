@@ -39,8 +39,8 @@ Eine Tankladung Sand (300) bringt am Anfang 300 Credits. Eine Runde „Saugen �
 | Rohrleitung | 6/Zelle | Rohrleitungen (12 FP) |
 | Trockner | 30/Zelle | Trockner (5 FP) |
 | Schmelzofen | 120/Zelle | Schmelzofen (15 FP) |
-| Magnetabscheider (3×3) | 150/Zelle | Magnetabscheider (8 FP) |
-| Auto-Bohrer (3×3) | 250/Zelle | Auto-Bohrer (10 FP) |
+| Magnetabscheider (3×3) | 60/Zelle | Magnetabscheider (8 FP) |
+| Auto-Bohrer (3×3) | 80/Zelle | Auto-Bohrer (10 FP) |
 | Annahmetrichter | 400/Zelle | Außenannahme (20 FP) |
 
 Abriss erstattet 50 %.
@@ -64,3 +64,4 @@ Abriss erstattet 50 %.
 | `settle_p` | 0,35 | Schlick setzt sich ab: 72 % nasser Sand, 14 % Schill, 7 % Magnetit, 7 % Kies |
 | `sun` | 0,08 (0,18) | Trocknung nasser Sand an der Luft (nur tagsüber) |
 | Gezeiten | ±12 Zellen, 90 s Periode | Flutet das Watt, spült Schlick an |
+| `drill_p` / `drill_r` | 0,04 / 40 (0,12 / 80) | Förderbohrer: Chance je Kopfspalte/Tick / Schachttiefe. Ein 3×3-Bohrer liefert ~7 Zellen/s (~18 mit Bohrtürmen) |

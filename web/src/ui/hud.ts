@@ -110,7 +110,7 @@ export class Hud {
     const g = this.game;
     const inv = g.state.inventory;
     const invKey = LOOSE.map((m) => (inv[m] ? `${m}:${Math.floor(inv[m])}` : '')).join(',');
-    const key = [g.tool, g.buildId, g.selectedMat, g.pickupWater, g.emitMode, g.brush, g.conveyorDir, g.pipeDir, g.state.research.length, invKey, Math.floor(g.state.credits / 5)].join('|');
+    const key = [g.tool, g.buildId, g.selectedMat, g.pickupWater, g.emitMode, g.brush, g.conveyorDir, g.pipeDir, g.state.research.length, invKey].join('|');
     if (key === this.contextKey) return;
     this.contextKey = key;
     const c = this.context;
