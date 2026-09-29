@@ -18,7 +18,11 @@ async function boot() {
   const canvas = document.getElementById('game') as HTMLCanvasElement;
   const uiRoot = document.getElementById('ui')!;
   const sim = await Sim.load(
-    fetch(wasmUrl).then((r) => r.arrayBuffer()),
+    // The single-file build inlines the wasm as a data: URL; decode it directly
+    // because some sandboxed hosts block fetch() of data: URLs.
+    wasmUrl.startsWith('data:')
+      ? Uint8Array.from(atob(wasmUrl.slice(wasmUrl.indexOf(',') + 1)), (c) => c.charCodeAt(0))
+      : fetch(wasmUrl).then((r) => r.arrayBuffer()),
     WORLD.width,
     WORLD.height,
     Date.now(),
