@@ -1,0 +1,26 @@
+{
+  "name": "abyssal-drift",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Abyssal Drift – Partikel-Fabrikspiel an der Küste (Browser-Alpha)",
+  "scripts": {
+    "wasm": "node scripts/build-wasm.mjs",
+    "dev": "npm run wasm && vite",
+    "build": "npm run wasm && tsc --noEmit && vite build",
+    "build:single": "npm run wasm && vite build --mode single",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run wasm && vitest run",
+    "test:rust": "cargo test --release --manifest-path sim/Cargo.toml",
+    "e2e": "node scripts/e2e.mjs",
+    "check": "npm run test:rust && npm run test && npm run build && npm run e2e"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.63.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.1",
+    "vite-plugin-singlefile": "^2.3.3",
+    "vitest": "^5.0.2"
+  }
+}

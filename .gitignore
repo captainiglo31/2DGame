@@ -1,0 +1,8 @@
+node_modules/
+dist/
+dist-single/
+sim/target/
+web/src/sim/sim.wasm
+test-results/
+*.log
+.DS_Store
