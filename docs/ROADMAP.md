@@ -65,6 +65,7 @@ Das 2-Gitter-Modell aus dem GDD (Euler-Strömungsfeld + Partikel) ist **bewusst 
 
 ## M6 – Alpha-Rahmen ✅
 - ✅ Hauptmenü, Pause, Speichern/Laden (3 Slots + Autosave + Export/Import)
+- ✅ Mehrsprachigkeit: Deutsch & Englisch vollständig, Sprachschalter im Hauptmenü, Erkennung der Browsersprache, lokalisierte Zahlen/Daten, Test auf fehlende Übersetzungen
 - ✅ Einstellungen: Sprache (DE/EN), Lautstärken, UI-Skalierung, FPS, Nachtabdunklung, reduzierte Animationen, Simulationsgeschwindigkeit, Autosave-Intervall, Randscrollen, Tutorial-Hinweise
 - ✅ Prozedurales Audio (Meer, Pad-Musik, Effekte)
 - ✅ HUD: Ressourcen, Tank, Tag/Nacht, Gezeiten, Auftrag, Werkzeugleiste, Bau-Palette
@@ -104,4 +105,4 @@ Das 2-Gitter-Modell aus dem GDD (Euler-Strömungsfeld + Partikel) ist **bewusst 
 - Druckschleusen, Schlot-Wärmetauscher
 
 ### M12 – Release ⬜
-- Desktop-Build mit Tauri (Steam), Achievements, Cloud-Saves, Lokalisierung weiterer Sprachen
+- Desktop-Build mit Tauri (Steam), Achievements, Cloud-Saves, weitere Sprachen (FR, ES, …)

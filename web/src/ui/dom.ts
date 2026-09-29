@@ -1,3 +1,5 @@
+import { getLang } from '../i18n';
+
 type Child = Node | string | number | null | undefined | false;
 type Attrs = Record<string, unknown> & { class?: string; style?: string };
 
@@ -37,9 +39,10 @@ export function clear(el: HTMLElement) {
 
 export function fmt(n: number): string {
   if (n >= 1e9) return '∞';
-  if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
-  if (n >= 1e4) return (n / 1e3).toFixed(1) + 'k';
-  return Math.floor(n).toLocaleString();
+  const one = { maximumFractionDigits: 1 };
+  if (n >= 1e6) return (n / 1e6).toLocaleString(getLang(), one) + 'M';
+  if (n >= 1e4) return (n / 1e3).toLocaleString(getLang(), one) + 'k';
+  return Math.floor(n).toLocaleString(getLang());
 }
 
 export function fmtTime(sec: number): string {

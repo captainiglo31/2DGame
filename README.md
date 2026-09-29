@@ -29,6 +29,17 @@ npm run check        # Rust-Tests, Unit-Tests, Build, Browser-Smoke-Test
 | `npm run build` | Produktions-Build nach `dist/` |
 | `npm run e2e` | Headless-Chromium spielt eine Runde und legt Screenshots in `test-results/` ab |
 
+## Sprachen
+
+Das Spiel ist komplett auf **Deutsch** und **Englisch** verfügbar. Beim ersten Start richtet es sich nach der Browsersprache: Deutsch für `de-*`, sonst Englisch. Umschalten geht jederzeit über den Sprachschalter oben rechts im Hauptmenü oder unter *Einstellungen → Sprache*, die Wahl wird gespeichert.
+
+Weitere Sprache hinzufügen:
+1. `web/src/i18n/de.ts` nach z. B. `fr.ts` kopieren und übersetzen.
+2. In `web/src/i18n/index.ts` die Tabelle registrieren (`Lang`-Typ + `tables`).
+3. In `web/src/ui/menus.ts` bei `LANGS` den Eintrag `['fr', 'Français']` ergänzen.
+
+`npm test` prüft automatisch, dass alle Sprachen dieselben Schlüssel haben und jeder im Code verwendete Text existiert.
+
 ## Aufbau
 
 ```

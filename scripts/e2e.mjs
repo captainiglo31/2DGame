@@ -44,6 +44,16 @@ try {
   await page.screenshot({ path: `${OUT}/01-title.png` });
   check(true, 'title screen');
 
+  // Language switch on the title screen: German and English.
+  await page.click('[data-lang=de]');
+  const deText = await page.textContent('[data-testid=new-game]');
+  await page.screenshot({ path: `${OUT}/01-title-de.png` });
+  await page.click('[data-lang=en]');
+  const enText = await page.textContent('[data-testid=new-game]');
+  check(deText === 'Neues Spiel' && enText === 'New game', `language switch (${deText} / ${enText})`);
+  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('abyssal.settings')).lang);
+  check(stored === 'en', 'language is remembered');
+
   await page.click('[data-testid=new-game]');
   await page.waitForSelector('[data-testid=welcome]');
   await page.screenshot({ path: `${OUT}/02a-welcome.png` });

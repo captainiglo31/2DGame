@@ -14,6 +14,8 @@ import { Menus } from './ui/menus';
 async function boot() {
   const settings = loadSettings();
   setLang(settings.lang);
+  const loading = document.getElementById('loading');
+  if (loading) loading.textContent = t('ui.loading');
 
   const canvas = document.getElementById('game') as HTMLCanvasElement;
   const uiRoot = document.getElementById('ui')!;
@@ -113,5 +115,5 @@ async function boot() {
 boot().catch((e) => {
   console.error(e);
   const el = document.getElementById('loading');
-  if (el) el.textContent = `Fehler beim Laden: ${e?.message ?? e}`;
+  if (el) el.textContent = `${t('ui.loadError')}: ${e?.message ?? e}`;
 });

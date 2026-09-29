@@ -1,5 +1,7 @@
 export const de: Record<string, string> = {
   'game.title': 'Abyssal Drift',
+  'ui.loading': 'Lade Simulation …',
+  'ui.loadError': 'Fehler beim Laden',
   'game.subtitle': 'Küstenfabrik · Alpha',
 
   // menu

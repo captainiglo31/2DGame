@@ -7,6 +7,12 @@ import { DEFAULT_SETTINGS, saveSettings, type Settings } from '../settings';
 import { clear, fmt, fmtTime, h } from './dom';
 import { researchDialog } from './researchUI';
 
+/** Available languages, shown in their own name. Add a table in i18n/ to extend. */
+export const LANGS: [Lang, string][] = [
+  ['de', 'Deutsch'],
+  ['en', 'English'],
+];
+
 export const VERSION = 'v0.1.0-alpha';
 
 export interface MenuHost {
@@ -77,6 +83,15 @@ export class Menus {
     } else this.showPause();
   }
 
+  /** Switch language everywhere: menus, HUD and the stored settings. */
+  setLanguage(lang: Lang) {
+    this.host.settings.lang = lang;
+    setLang(lang);
+    saveSettings(this.host.settings);
+    this.host.rebuildHud();
+    this.refresh();
+  }
+
   // ------------------------------------------------------------- screens
 
   showTitle() {
@@ -117,6 +132,22 @@ export class Menus {
             h('button', { onclick: () => this.showSettings() }, t('menu.settings')),
             h('button', { onclick: () => this.showHelp() }, t('menu.help')),
             h('button', { onclick: () => this.showAbout() }, t('menu.about')),
+          ),
+        ),
+        h(
+          'div',
+          { class: 'lang-switch', role: 'group', 'aria-label': t('settings.language') },
+          ...LANGS.map(([code, label]) =>
+            h(
+              'button',
+              {
+                class: getLang() === code ? 'active' : '',
+                'aria-pressed': String(getLang() === code),
+                'data-lang': code,
+                onclick: () => this.setLanguage(code),
+              },
+              label,
+            ),
           ),
         ),
         h('div', { class: 'version' }, VERSION),
@@ -210,7 +241,7 @@ export class Menus {
           ? h(
               'small',
               null,
-              `${new Date(meta.savedAt).toLocaleString()} · 💰 ${fmt(meta.credits)} · 📜 ${meta.contract + 1} · ⏱ ${fmtTime(meta.playTime)}${meta.creative ? ' · ' + t('menu.creative') : ''}`,
+              `${new Date(meta.savedAt).toLocaleString(getLang())} · 💰 ${fmt(meta.credits)} · 📜 ${meta.contract + 1} · ⏱ ${fmtTime(meta.playTime)}${meta.creative ? ' · ' + t('menu.creative') : ''}`,
             )
           : h('small', null, t('menu.empty'));
         list.append(
@@ -362,17 +393,8 @@ export class Menus {
             h('span', null, t('settings.language')),
             select(
               getLang(),
-              [
-                ['de', 'Deutsch'],
-                ['en', 'English'],
-              ],
-              (v) => {
-                s.lang = v as Lang;
-                setLang(s.lang);
-                commit();
-                this.host.rebuildHud();
-                this.refresh();
-              },
+              LANGS,
+              (v) => this.setLanguage(v as Lang),
             ),
             h('h3', null, t('settings.audio')),
             h('span', null, t('settings.master')),

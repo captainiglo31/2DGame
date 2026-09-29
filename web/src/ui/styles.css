@@ -423,6 +423,21 @@ label.toggle {
   text-transform: uppercase;
   font-size: 0.8em;
 }
+.lang-switch {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  gap: 4px;
+}
+.lang-switch button {
+  padding: 0.3em 0.7em;
+  font-size: 0.85em;
+}
+.lang-switch button.active {
+  border-color: var(--accent);
+  background: rgba(63, 208, 160, 0.2);
+}
 .version {
   position: absolute;
   bottom: 10px;
